@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -20,7 +21,7 @@ func Main(ctx context.Context) error {
 	token := flag.String("token", "", "Tesla API token")
 	flag.Parse()
 
-	if token == "" {
+	if *token == "" {
 		return errors.New("token must be set")
 	}
 
