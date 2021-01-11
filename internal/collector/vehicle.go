@@ -19,6 +19,7 @@ type VehicleCollector struct {
 
 func NewVehicleCollector(ctx context.Context, c *tesla.Client) *VehicleCollector {
 	return &VehicleCollector{
+		ctx: ctx,
 		c: c,
 		infoDesc: prometheus.NewDesc("tesla_vehicle_info", "Tesla vehicle info.", []string{
 			"id", "vehicle_id", "vin", "name", "color", "state",
