@@ -14,15 +14,17 @@ import (
 )
 
 func ListenAndServe(ctx context.Context, addr string, r *prometheus.Registry) error {
+	m := http.NewServeMux()
+	m.Handle("/metrics", promhttp.InstrumentMetricHandler(
+		r, promhttp.HandlerFor(r, promhttp.HandlerOpts{})),
+	)
+
 	s := &http.Server{
 		Addr:         addr,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  120 * time.Second,
-		Handler: promhttp.InstrumentMetricHandler(r, promhttp.HandlerFor(
-			r,
-			promhttp.HandlerOpts{},
-		)),
+		Handler: m,
 	}
 
 	g, ctx := errgroup.WithContext(ctx)
