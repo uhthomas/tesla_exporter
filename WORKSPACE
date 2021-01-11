@@ -1542,4 +1542,18 @@ go_repository(
     version = "v1.13.0",
 )
 
+go_repository(
+    name = "com_github_andybalholm_cascadia",
+    importpath = "github.com/andybalholm/cascadia",
+    sum = "h1:BuuO6sSfQNFRu1LppgbD25Hr2vLYW25JvxHs5zzsLTo=",
+    version = "v1.1.0",
+)
+
+go_repository(
+    name = "com_github_puerkitobio_goquery",
+    importpath = "github.com/PuerkitoBio/goquery",
+    sum = "h1:j7taAbelrdcsOlGeMenZxc2AWXD5fieT1/znArdnx94=",
+    version = "v1.6.0",
+)
+
 gazelle_dependencies()

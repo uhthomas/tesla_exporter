@@ -1,0 +1,21 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "login_lib",
+    srcs = [
+        "client.go",
+        "main.go",
+    ],
+    importpath = "github.com/uhthomas/tesla_exporter/cmd/login",
+    visibility = ["//visibility:private"],
+    deps = [
+        "@com_github_puerkitobio_goquery//:goquery",
+        "@org_golang_x_crypto//ssh/terminal",
+    ],
+)
+
+go_binary(
+    name = "login",
+    embed = [":login_lib"],
+    visibility = ["//visibility:public"],
+)
