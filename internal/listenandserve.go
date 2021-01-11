@@ -24,7 +24,7 @@ func ListenAndServe(ctx context.Context, addr string, r *prometheus.Registry) er
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  120 * time.Second,
-		Handler: m,
+		Handler:      m,
 	}
 
 	g, ctx := errgroup.WithContext(ctx)
