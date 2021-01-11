@@ -1,0 +1,40 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "tesla_exporter_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/uhthomas/tesla_exporter/cmd/tesla_exporter",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//internal",
+        "//internal/collector",
+        "//internal/tesla",
+        "@com_github_prometheus_client_golang//prometheus",
+    ],
+)
+
+load("@io_bazel_rules_docker//go:image.bzl", "go_image")
+
+go_image(
+    name = "tesla_exporter",
+    embed = [":tesla_exporter_lib"],
+    visibility = ["//visibility:public"],
+)
+
+load("@io_bazel_rules_docker//docker:docker.bzl", "docker_push")
+
+docker_push(
+    name = "push",
+    image = ":image",
+    registry = "ghcr.io",
+    repository = "uhthomas/tesla_exporter",
+    tag = "{STABLE_GIT_COMMIT}",
+)
+
+docker_push(
+    name = "push_tag",
+    image = ":image",
+    registry = "ghcr.io",
+    repository = "uhthomas/tesla_exporter",
+    tag = "{STABLE_GIT_REF}",
+)

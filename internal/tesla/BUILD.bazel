@@ -1,0 +1,12 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "tesla",
+    srcs = [
+        "option.go",
+        "tesla.go",
+        "vehicles.go",
+    ],
+    importpath = "github.com/uhthomas/tesla_exporter/internal/tesla",
+    visibility = ["//:__subpackages__"],
+)

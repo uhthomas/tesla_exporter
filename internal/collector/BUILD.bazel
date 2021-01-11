@@ -1,0 +1,12 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "collector",
+    srcs = ["vehicle.go"],
+    importpath = "github.com/uhthomas/tesla_exporter/internal/collector",
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//internal/tesla",
+        "@com_github_prometheus_client_golang//prometheus",
+    ],
+)
