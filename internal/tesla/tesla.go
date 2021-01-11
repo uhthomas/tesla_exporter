@@ -29,7 +29,7 @@ func New(token string, opts ...Option) (*Client, error) {
 		baseURL: &url.URL{
 			Scheme: "https",
 			Host:   "owner-api.teslamotors.com",
-			Path:   "api/v1",
+			Path:   "api/1",
 		},
 		token: token,
 	}
