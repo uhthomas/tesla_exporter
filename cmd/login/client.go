@@ -291,7 +291,7 @@ func (c *Client) authorize(ctx context.Context, transactionID string) (code stri
 	return u.Query().Get("code"), nil
 }
 
-func (c *Client) accessToken(ctx context.Context,  code string) (token string, err error) {
+func (c *Client) accessToken(ctx context.Context, code string) (token string, err error) {
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(map[string]string{
 		"grant_type":    "authorization_code",
