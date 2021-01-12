@@ -226,11 +226,7 @@ func (c *Client) verify(ctx context.Context, transactionID, deviceID, passcode s
 		return fmt.Errorf("json encode: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, (&url.URL{
-		Scheme: "https",
-		Host:   "auth.tesla.com",
-		Path:   "oauth2/v3/authorize/mfa/verify",
-	}).String(), &buf)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "https://auth.tesla.com/oauth2/v3/authorize/mfa/verify", &buf)
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
 	}
@@ -303,11 +299,7 @@ func (c *Client) accessToken(ctx context.Context, code string) (token string, er
 		return "", fmt.Errorf("json encode: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, (&url.URL{
-		Scheme: "https",
-		Host:   "auth.Tesla.com",
-		Path:   "oauth2/v3/token",
-	}).String(), &buf)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "https://auth.tesla.com/oauth2/v3/token", &buf)
 	if err != nil {
 		return "", fmt.Errorf("new request: %w", err)
 	}
@@ -343,11 +335,7 @@ func (c *Client) exchangeToken(ctx context.Context, token string) (string, error
 		return "", fmt.Errorf("json encode: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, (&url.URL{
-		Scheme: "https",
-		Host:   "owner-api.teslamotors.com",
-		Path:   "oauth/token",
-	}).String(), &buf)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "https://owner-api.teslamotors.com/oauth/token", &buf)
 	if err != nil {
 		return "", fmt.Errorf("new request: %w", err)
 	}
