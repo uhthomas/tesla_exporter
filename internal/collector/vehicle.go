@@ -81,7 +81,6 @@ func (c *VehicleCollector) Collect(ch chan<- prometheus.Metric) {
 		m.gauge(c.infoDesc, 1,
 			strconv.FormatUint(v.ID, 10),
 			strconv.FormatUint(v.VehicleID, 10),
-			v.VIN,
 		)
 		m.gauge(c.nameDesc, 1, v.DisplayName)
 		m.gauge(c.stateDesc, 1, v.State)
