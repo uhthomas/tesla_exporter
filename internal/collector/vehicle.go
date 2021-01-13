@@ -39,19 +39,21 @@ func (c *VehicleCollector) Collect(ch chan<- prometheus.Metric) {
 	ctx, cancel := context.WithTimeout(c.ctx, 5*time.Second)
 	defer cancel()
 
-	v, err := c.c.Vehicles(ctx)
+	vs, err := c.c.Vehicles(ctx)
 	if err != nil {
 		panic(err)
 	}
 
-	for _, vv := range v {
+	for _, v := range vs {
 		ch <- prometheus.MustNewConstMetric(c.infoDesc, prometheus.GaugeValue, 1,
-			strconv.FormatUint(vv.ID, 10),
-			strconv.FormatUint(vv.VehicleID, 10),
-			vv.VIN,
-			vv.DisplayName,
-			vv.Color,
-			vv.State,
+			strconv.FormatUint(v.ID, 10),
+			strconv.FormatUint(v.VehicleID, 10),
+			v.VIN,
+			v.DisplayName,
+			v.VehicleConfig.ExteriorColor,
+			v.State,
 		)
+		ch <- prometheus.MustNewConstMetric(c.insideTempDesc, prometheus.GaugeValue, v.ClimateState.InsideTemp)
+		ch <- prometheus.MustNewConstMetric(c.outsideTempDesc, prometheus.GaugeValue, v.ClimateState.OutsideTemp)
 	}
 }

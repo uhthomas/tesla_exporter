@@ -9,23 +9,14 @@ import (
 )
 
 type vehiclesResponse struct {
-	Response []*Vehicle `json:"response"`
-	Count    int        `json:"count"`
+	Response []struct {
+		ID uint64 `json:"id"`
+	} `json:"response"`
+	Count int `json:"count"`
 }
 
-type Vehicle struct {
-	ID              uint64   `json:"id"`
-	VehicleID       uint64   `json:"vehicle_id"`
-	VIN             string   `json:"vin"`
-	DisplayName     string   `json:"display_name"`
-	OptionCodes     string   `json:"option_codes"`
-	Color           string   `json:"color"`
-	Tokens          []string `json:"tokens"`
-	State           string   `json:"state"`
-	InService       bool     `json:"in_service"`
-	CalendarEnabled bool     `json:"calendar_enabled"`
-}
-
+// Vehicles lists all vehicles associated with the account, and describes them
+// in detail.
 func (c *Client) Vehicles(ctx context.Context) ([]*Vehicle, error) {
 	u := *c.baseURL
 	u.Path = path.Join(u.Path, "vehicles")
@@ -51,5 +42,14 @@ func (c *Client) Vehicles(ctx context.Context) ([]*Vehicle, error) {
 	if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
 		return nil, fmt.Errorf("json decode: %w", err)
 	}
-	return out.Response, nil
+
+	vs := make([]*Vehicle, len(out.Response))
+	for i, r := range out.Response {
+		v, err := c.Vehicle(ctx, r.ID)
+		if err != nil {
+			return nil, fmt.Errorf("get vehicle %d: %w", r.ID, err)
+		}
+		vs[i] = v
+	}
+	return vs, nil
 }

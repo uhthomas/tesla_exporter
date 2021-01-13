@@ -5,6 +5,7 @@ go_library(
     srcs = [
         "option.go",
         "tesla.go",
+        "vehicle.go",
         "vehicles.go",
     ],
     importpath = "github.com/uhthomas/tesla_exporter/internal/tesla",
