@@ -103,11 +103,8 @@ func (c *Client) authURL() *url.URL {
 		Path:   "oauth2/v3/authorize",
 		RawQuery: url.Values{
 			"client_id":             {"ownerapi"},
-			"audience":              {""},
 			"code_challenge":        {c.challengeSum},
 			"code_challenge_method": {"S256"},
-			"locale":                {"en"},
-			"prompt":                {"login"},
 			"redirect_uri":          {"https://auth.tesla.com/void/callback"},
 			"response_type":         {"code"},
 			"scope":                 {"openid email offline_access"},
