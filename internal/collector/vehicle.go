@@ -33,10 +33,10 @@ func NewVehicleCollector(ctx context.Context, c *tesla.Client) *VehicleCollector
 	return &VehicleCollector{
 		ctx:                       ctx,
 		c:                         c,
-		infoDesc:                  prometheus.NewDesc("tesla_vehicle_info", "Tesla vehicle info.", []string{"id", "vehicle_id", "vin"}, nil),
-		nameDesc:                  prometheus.NewDesc("tesla_vehicle_name", "Tesla vehicle name.", []string{"vin"}, nil),
-		stateDesc:                 prometheus.NewDesc("tesla_vehicle_state", "Tesla vehicle state.", []string{"vin"}, nil),
-		softwareVersionDesc:       prometheus.NewDesc("tesla_vehicle_software_version", "Tesla vehicle software version.", []string{"vin"}, nil),
+		infoDesc:                  prometheus.NewDesc("tesla_vehicle_info", "Tesla vehicle info.", []string{"vin", "id", "vehicle_id"}, nil),
+		nameDesc:                  prometheus.NewDesc("tesla_vehicle_name", "Tesla vehicle name.", []string{"vin", "name"}, nil),
+		stateDesc:                 prometheus.NewDesc("tesla_vehicle_state", "Tesla vehicle state.", []string{"vin", "state"}, nil),
+		softwareVersionDesc:       prometheus.NewDesc("tesla_vehicle_software_version", "Tesla vehicle software version.", []string{"vin", "software_version"}, nil),
 		odometerMilesSumDesc:      prometheus.NewDesc("tesla_vehicle_odometer_miles_sum", "Tesla vehicle odometer miles.", []string{"vin"}, nil),
 		insideTempDesc:            prometheus.NewDesc("tesla_vehicle_inside_temp_celsius", "Tesla vehicle inside temperature.", []string{"vin"}, nil),
 		outsideTempDesc:           prometheus.NewDesc("tesla_vehicle_outside_temp_celsius", "Tesla vehicle outside temperature.", []string{"vin"}, nil),
@@ -122,6 +122,6 @@ func (m *metricMaker) gauge(desc *prometheus.Desc, value float64, labelValues ..
 		desc,
 		prometheus.GaugeValue,
 		value,
-		m.vin,
+		append([]string{m.vin}, labelValues...)...,
 	)
 }
