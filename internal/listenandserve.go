@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -14,17 +15,18 @@ import (
 )
 
 func ListenAndServe(ctx context.Context, addr string, r *prometheus.Registry) error {
-	m := http.NewServeMux()
-	m.HandleFunc("/metrics", func(w http.ResponsrWriter, r *http.Request) {
+	m, h := http.NewServeMux(), promhttp.InstrumentMetricHandler(
+		r, promhttp.HandlerFor(r, promhttp.HandlerOpts{}),
+	)
+	m.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
-			if err := recover(); err != nil {
-				log.Printf("recover: %#v", err)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+			if rr := recover(); rr != nil {
+				log.Printf("recover: %#v", rr)
+				w.WriteHeader(http.StatusInternalServerError)
+				fmt.Fprintf(w, "%#v", rr)
 			}
 		}()
-		promhttp.InstrumentMetricHandler(
-			r, promhttp.HandlerFor(t, promhttp.HandlerOpts{}),
-		).ServeHTTP(w, r)
+		h.ServeHTTP(w, r)
 	})
 
 	s := &http.Server{
