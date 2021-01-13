@@ -37,7 +37,7 @@ func (c *VehicleCollector) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (c *VehicleCollector) Collect(ch chan<- prometheus.Metric) {
-	ctx, cancel := context.WithTimeout(c.ctx, 5*time.Second)
+	ctx, cancel := context.WithTimeout(c.ctx, 15*time.Second)
 	defer cancel()
 
 	vs, err := c.c.Vehicles(ctx)
