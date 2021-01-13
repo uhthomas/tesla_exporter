@@ -1,4 +1,4 @@
-load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "collector",
@@ -9,4 +9,10 @@ go_library(
         "//internal/tesla",
         "@com_github_prometheus_client_golang//prometheus",
     ],
+)
+
+go_test(
+    name = "collector_test",
+    srcs = ["vehicle_test.go"],
+    embed = [":collector"],
 )

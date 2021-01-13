@@ -14,7 +14,10 @@ type VehicleCollector struct {
 	ctx context.Context
 	c   *tesla.Client
 	infoDesc,
-	odometerMilesDesc,
+	nameDesc,
+	stateDesc,
+	softwareVersionDesc,
+	odometerMilesSumDesc,
 	insideTempDesc,
 	outsideTempDesc,
 	batteryRatioDesc,
@@ -28,12 +31,13 @@ type VehicleCollector struct {
 
 func NewVehicleCollector(ctx context.Context, c *tesla.Client) *VehicleCollector {
 	return &VehicleCollector{
-		ctx: ctx,
-		c:   c,
-		infoDesc: prometheus.NewDesc("tesla_vehicle_info", "Tesla vehicle info.", []string{
-			"id", "vehicle_id", "vin", "name", "state",
-		}, nil),
-		odometerMilesDesc:         prometheus.NewDesc("tesla_vehicle_odometer_miles", "Tesla vehicle odometer miles.", []string{"vin"}, nil),
+		ctx:                       ctx,
+		c:                         c,
+		infoDesc:                  prometheus.NewDesc("tesla_vehicle_info", "Tesla vehicle info.", []string{"id", "vehicle_id", "vin"}, nil),
+		nameDesc:                  prometheus.NewDesc("tesla_vehicle_name", "Tesla vehicle name.", []string{"vin"}, nil),
+		stateDesc:                 prometheus.NewDesc("tesla_vehicle_state", "Tesla vehicle state.", []string{"vin"}, nil),
+		softwareVersionDesc:       prometheus.NewDesc("tesla_vehicle_software_version", "Tesla vehicle software version.", []string{"vin"}, nil),
+		odometerMilesSumDesc:      prometheus.NewDesc("tesla_vehicle_odometer_miles_sum", "Tesla vehicle odometer miles.", []string{"vin"}, nil),
 		insideTempDesc:            prometheus.NewDesc("tesla_vehicle_inside_temp_celsius", "Tesla vehicle inside temperature.", []string{"vin"}, nil),
 		outsideTempDesc:           prometheus.NewDesc("tesla_vehicle_outside_temp_celsius", "Tesla vehicle outside temperature.", []string{"vin"}, nil),
 		batteryRatioDesc:          prometheus.NewDesc("tesla_vehicle_battery_ratio", "Tesla vehicle battery ratio.", []string{"vin"}, nil),
@@ -48,7 +52,10 @@ func NewVehicleCollector(ctx context.Context, c *tesla.Client) *VehicleCollector
 
 func (c *VehicleCollector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- c.infoDesc
-	ch <- c.odometerMilesDesc
+	ch <- c.nameDesc
+	ch <- c.stateDesc
+	ch <- c.softwareVersionDesc
+	ch <- c.odometerMilesSumDesc
 	ch <- c.insideTempDesc
 	ch <- c.outsideTempDesc
 	ch <- c.batteryRatioDesc
@@ -70,13 +77,14 @@ func (c *VehicleCollector) Collect(ch chan<- prometheus.Metric) {
 	}
 
 	for _, v := range vs {
-		ch <- prometheus.MustNewConstMetric(c.infoDesc, prometheus.GaugeValue, 1,
+		m := metricMaker{ch: ch, vin: v.VIN}
+		m.gauge(c.infoDesc, 1,
 			strconv.FormatUint(v.ID, 10),
 			strconv.FormatUint(v.VehicleID, 10),
 			v.VIN,
-			v.DisplayName,
-			v.State,
 		)
+		m.gauge(c.nameDesc, 1, v.DisplayName)
+		m.gauge(c.stateDesc, 1, v.State)
 
 		// detailed information is not available for sleeping vehicles.
 		if v.State != "online" {
@@ -88,10 +96,10 @@ func (c *VehicleCollector) Collect(ch chan<- prometheus.Metric) {
 			panic(fmt.Errorf("get vehicle %d: %w", v.ID, err))
 		}
 
-		m := metricMaker{ch: ch, vin: vv.VIN}
+		m.gauge(c.softwareVersionDesc, 1, vv.VehicleState.CarVersion)
 		// really this shouldn't be a gauge, as the value can never
 		// decrease.
-		m.gauge(c.odometerMilesDesc, vv.VehicleState.Odometer)
+		m.gauge(c.odometerMilesSumDesc, vv.VehicleState.Odometer)
 		m.gauge(c.insideTempDesc, vv.ClimateState.InsideTemp)
 		m.gauge(c.outsideTempDesc, vv.ClimateState.OutsideTemp)
 		m.gauge(c.batteryRatioDesc, vv.ChargeState.BatteryLevel/100)
