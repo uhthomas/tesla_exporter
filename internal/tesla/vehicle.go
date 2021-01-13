@@ -68,8 +68,10 @@ type VehicleConfig struct {
 }
 
 type VehicleChargeState struct {
-	BatteryHeaterOn             bool        `json:"battery_heater_on"`
-	BatteryLevel                int         `json:"battery_level"`
+	BatteryHeaterOn bool `json:"battery_heater_on"`
+	// Always an integer, but we decode it as a float64 to convert to a
+	// ratio later.
+	BatteryLevel                float64     `json:"battery_level"`
 	BatteryRange                float64     `json:"battery_range"`
 	ChargeCurrentRequest        int         `json:"charge_current_request"`
 	ChargeCurrentRequestMax     int         `json:"charge_current_request_max"`
@@ -109,8 +111,10 @@ type VehicleChargeState struct {
 	TimeToFullCharge            float64     `json:"time_to_full_charge"`
 	Timestamp                   uint64      `json:"timestamp"`
 	TripCharging                bool        `json:"trip_charging"`
-	UsableBatteryLevel          int         `json:"usable_battery_level"`
-	UserChargeEnableRequest     interface{} `json:"user_charge_enable_request"`
+	// Always an integer, but we decode it as a float64 to convert to a
+	// ratio later.
+	UsableBatteryLevel      float64     `json:"usable_battery_level"`
+	UserChargeEnableRequest interface{} `json:"user_charge_enable_request"`
 }
 
 type VehicleClimateState struct {
