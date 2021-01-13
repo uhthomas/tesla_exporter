@@ -53,7 +53,7 @@ func (c *VehicleCollector) Collect(ch chan<- prometheus.Metric) {
 			v.VehicleConfig.ExteriorColor,
 			v.State,
 		)
-		ch <- prometheus.MustNewConstMetric(c.insideTempDesc, prometheus.GaugeValue, v.ClimateState.InsideTemp)
-		ch <- prometheus.MustNewConstMetric(c.outsideTempDesc, prometheus.GaugeValue, v.ClimateState.OutsideTemp)
+		ch <- prometheus.MustNewConstMetric(c.insideTempDesc, prometheus.GaugeValue, v.ClimateState.InsideTemp, v.VIN)
+		ch <- prometheus.MustNewConstMetric(c.outsideTempDesc, prometheus.GaugeValue, v.ClimateState.OutsideTemp, v.VIN)
 	}
 }
