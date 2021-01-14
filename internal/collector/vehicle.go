@@ -37,7 +37,7 @@ func NewVehicleCollector(ctx context.Context, c *tesla.Client) *VehicleCollector
 		nameDesc:                  prometheus.NewDesc("tesla_vehicle_name", "Tesla vehicle name.", []string{"vin", "name"}, nil),
 		stateDesc:                 prometheus.NewDesc("tesla_vehicle_state", "Tesla vehicle state.", []string{"vin", "state"}, nil),
 		softwareVersionDesc:       prometheus.NewDesc("tesla_vehicle_software_version", "Tesla vehicle software version.", []string{"vin", "software_version"}, nil),
-		odometerMilesSumDesc:      prometheus.NewDesc("tesla_vehicle_odometer_miles_sum", "Tesla vehicle odometer miles.", []string{"vin"}, nil),
+		odometerMilesSumDesc:      prometheus.NewDesc("tesla_vehicle_odometer_miles_total", "Tesla vehicle odometer miles.", []string{"vin"}, nil),
 		insideTempDesc:            prometheus.NewDesc("tesla_vehicle_inside_temp_celsius", "Tesla vehicle inside temperature.", []string{"vin"}, nil),
 		outsideTempDesc:           prometheus.NewDesc("tesla_vehicle_outside_temp_celsius", "Tesla vehicle outside temperature.", []string{"vin"}, nil),
 		batteryRatioDesc:          prometheus.NewDesc("tesla_vehicle_battery_ratio", "Tesla vehicle battery ratio.", []string{"vin"}, nil),

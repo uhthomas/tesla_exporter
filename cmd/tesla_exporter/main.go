@@ -17,11 +17,11 @@ import (
 )
 
 func Main(ctx context.Context) error {
-	addr := flag.String("addr", ":80", "Listen address")
-	token := flag.String("token", "", "Tesla API token")
+	addr := flag.String("addr", ":80", "Listen address.")
+	token := flag.String("token", "$TOKEN", "Tesla API token, environment variables are expanded.")
 	flag.Parse()
 
-	if *token == "" {
+	if *token = os.ExpandEnv(*token); *token == "" {
 		return errors.New("token must be set")
 	}
 
