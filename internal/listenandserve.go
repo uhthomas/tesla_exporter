@@ -42,6 +42,5 @@ func ListenAndServe(ctx context.Context, addr string, r *prometheus.Registry) er
 		}
 		return nil
 	})
-
 	return g.Wait()
 }

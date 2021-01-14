@@ -73,7 +73,7 @@ func (c *VehicleCollector) Collect(ch chan<- prometheus.Metric) {
 
 	vs, err := c.c.Vehicles(ctx)
 	if err != nil {
-		log.Printf("list vehicles: %#v", err)
+		log.Printf("list vehicles: %v", err)
 		return
 	}
 
@@ -93,7 +93,7 @@ func (c *VehicleCollector) Collect(ch chan<- prometheus.Metric) {
 
 		vv, err := c.c.Vehicle(ctx, v.ID)
 		if err != nil {
-			log.Printf("get vehicle %d: %#v", v.ID, err)
+			log.Printf("get vehicle %d: %v", v.ID, err)
 			continue
 		}
 
