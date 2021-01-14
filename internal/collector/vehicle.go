@@ -2,7 +2,7 @@ package collector
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"strconv"
 	"time"
 
@@ -73,7 +73,8 @@ func (c *VehicleCollector) Collect(ch chan<- prometheus.Metric) {
 
 	vs, err := c.c.Vehicles(ctx)
 	if err != nil {
-		panic(fmt.Errorf("get vehicles: %w", err))
+		log.Printf("list vehicles: %#v", err)
+		return
 	}
 
 	for _, v := range vs {
@@ -92,7 +93,8 @@ func (c *VehicleCollector) Collect(ch chan<- prometheus.Metric) {
 
 		vv, err := c.c.Vehicle(ctx, v.ID)
 		if err != nil {
-			panic(fmt.Errorf("get vehicle %d: %w", v.ID, err))
+			log.Printf("get vehicle %d: %#v", v.ID, err)
+			continue
 		}
 
 		m.gauge(c.softwareVersionDesc, 1, vv.VehicleState.CarVersion)
