@@ -86,8 +86,9 @@ func (c *VehicleCollector) Collect(ch chan<- prometheus.Metric) {
 		m.gauge(c.nameDesc, 1, v.DisplayName)
 		m.gauge(c.stateDesc, 1, v.State)
 
-		// detailed information is not available for sleeping vehicles.
-		if v.State != "online" {
+		// detailed information is not available for sleeping or in
+		// service vehicles.
+		if v.State != "online" || v.InService {
 			continue
 		}
 
