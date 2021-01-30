@@ -22,15 +22,23 @@ import (
 
 type Client struct {
 	c                       *http.Client
+	state                   string
 	challenge, challengeSum string
 }
 
 func newClient() (*Client, error) {
-	var b [86]byte
+	// this doesn't have to be 9 bytes, or base64. Just preference.
+	var b [9]byte
 	if _, err := io.ReadFull(rand.Reader, b[:]); err != nil {
-		return nil, fmt.Errorf("rand read full: %w", err)
+		return nil, fmt.Errorf("rand state: %w", err)
 	}
-	challenge := base64.RawURLEncoding.EncodeToString(b[:])
+	state := base64.RawURLEncoding.EncodeToString(b[:])
+
+	var p [86]byte
+	if _, err := io.ReadFull(rand.Reader, p[:]); err != nil {
+		return nil, fmt.Errorf("rand challenge: %w", err)
+	}
+	challenge := base64.RawURLEncoding.EncodeToString(p[:])
 	sum := sha256.Sum256([]byte(challenge))
 
 	jar, err := cookiejar.New(nil)
@@ -51,6 +59,7 @@ func newClient() (*Client, error) {
 			},
 			Jar: jar,
 		},
+		state:        state,
 		challenge:    challenge,
 		challengeSum: base64.RawURLEncoding.EncodeToString(sum[:]),
 	}, nil
@@ -108,7 +117,7 @@ func (c *Client) authURL() *url.URL {
 			"redirect_uri":          {"https://auth.tesla.com/void/callback"},
 			"response_type":         {"code"},
 			"scope":                 {"openid email offline_access"},
-			"state":                 {"tesla_exporter"},
+			"state":                 {c.state},
 		}.Encode(),
 	}
 }
