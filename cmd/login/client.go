@@ -139,7 +139,7 @@ func (c *Client) authenticate(ctx context.Context, username, password string) (t
 		return "", fmt.Errorf("unexpected status code %d", res.StatusCode)
 	}
 
-	d, err := goquery.NewDocumentFromResponse(res)
+	d, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		return "", fmt.Errorf("new document: %w", err)
 	}
@@ -248,7 +248,7 @@ func (c *Client) verify(ctx context.Context, transactionID, deviceID, passcode s
 	var out struct {
 		Data struct {
 			Approved bool `json:"approved"`
-		} `json:"data`
+		} `json:"data"`
 	}
 	if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
 		return fmt.Errorf("json decode: %w", err)

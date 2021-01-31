@@ -13,6 +13,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CR_PAT }}
+      - run: bazel test //...
       - run: bazel run //cmd/tesla_exporter:push
         env:
           GIT_COMMIT: ${{ github.sha }}
