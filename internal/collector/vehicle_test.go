@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/uhthomas/tesla_exporter/internal/tesla"
+	"github.com/uhthomas/tesla"
 )
 
 func descs(c *VehicleCollector) []*prometheus.Desc {
@@ -28,13 +28,13 @@ func descs(c *VehicleCollector) []*prometheus.Desc {
 }
 
 func TestNewVehicleCollector(t *testing.T) {
-	ctx, c := context.Background(), &tesla.Client{}
-	cc := NewVehicleCollector(ctx, c)
+	ctx, s := context.Background(), &tesla.Service{}
+	cc := NewVehicleCollector(ctx, s)
 	if cc.ctx != ctx {
 		t.Fatalf("cc.ctx != ctx")
 	}
-	if cc.c != c {
-		t.Fatal("cc.c != c (tesla client)")
+	if cc.s != s {
+		t.Fatal("cc.s != s (tesla service)")
 	}
 	for i, desc := range descs(cc) {
 		if desc == nil {

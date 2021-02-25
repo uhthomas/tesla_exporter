@@ -7,12 +7,12 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/uhthomas/tesla_exporter/internal/tesla"
+	"github.com/uhthomas/tesla"
 )
 
 type VehicleCollector struct {
 	ctx context.Context
-	c   *tesla.Client
+	s   *tesla.Service
 	infoDesc,
 	nameDesc,
 	stateDesc,
@@ -29,10 +29,10 @@ type VehicleCollector struct {
 	chargeAmpsAvailableDesc *prometheus.Desc
 }
 
-func NewVehicleCollector(ctx context.Context, c *tesla.Client) *VehicleCollector {
+func NewVehicleCollector(ctx context.Context, s *tesla.Service) *VehicleCollector {
 	return &VehicleCollector{
 		ctx:                       ctx,
-		c:                         c,
+		s:                         s,
 		infoDesc:                  prometheus.NewDesc("tesla_vehicle_info", "Tesla vehicle info.", []string{"vin", "id", "vehicle_id"}, nil),
 		nameDesc:                  prometheus.NewDesc("tesla_vehicle_name", "Tesla vehicle name.", []string{"vin", "name"}, nil),
 		stateDesc:                 prometheus.NewDesc("tesla_vehicle_state", "Tesla vehicle state.", []string{"vin", "state"}, nil),
@@ -71,7 +71,7 @@ func (c *VehicleCollector) Collect(ch chan<- prometheus.Metric) {
 	ctx, cancel := context.WithTimeout(c.ctx, time.Minute)
 	defer cancel()
 
-	vs, err := c.c.Vehicles(ctx)
+	vs, err := c.s.Vehicles(ctx)
 	if err != nil {
 		log.Printf("list vehicles: %v", err)
 		return
@@ -92,7 +92,7 @@ func (c *VehicleCollector) Collect(ch chan<- prometheus.Metric) {
 			continue
 		}
 
-		vv, err := c.c.Vehicle(ctx, v.ID)
+		vv, err := c.s.Vehicle(ctx, v.ID)
 		if err != nil {
 			log.Printf("get vehicle %d: %v", v.ID, err)
 			continue
