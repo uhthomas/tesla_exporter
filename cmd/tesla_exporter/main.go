@@ -27,12 +27,16 @@ func Main(ctx context.Context) error {
 
 	ctx = context.WithValue(ctx, oauth2.HTTPClient, &http.Client{
 		Transport: &http.Transport{
-			Dial: (&net.Dialer{
+			Proxy: http.ProxyFromEnvironment,
+			DialContext: (&net.Dialer{
 				Timeout:   30 * time.Second,
 				KeepAlive: 30 * time.Second,
-			}).Dial,
-			TLSHandshakeTimeout:   10 * time.Second,
+			}).DialContext,
+			ForceAttemptHTTP2:     true,
+			MaxIdleConns:          100,
+			IdleConnTimeout:       90 * time.Second,
 			ResponseHeaderTimeout: 10 * time.Second,
+			TLSHandshakeTimeout:   10 * time.Second,
 			ExpectContinueTimeout: 1 * time.Second,
 		},
 	})
