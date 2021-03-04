@@ -10,6 +10,7 @@ go_library(
         "//internal/collector",
         "@com_github_prometheus_client_golang//prometheus",
         "@com_github_uhthomas_tesla//:tesla",
+        "@org_golang_x_oauth2//:oauth2",
     ],
 )
 

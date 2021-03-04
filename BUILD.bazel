@@ -7,7 +7,7 @@ load("@com_github_bazelbuild_buildtools//buildifier:def.bzl", "buildifier")
 
 buildifier(name = "buildifier")
 
-load("@io_bazel_rules_go//go:def.bzl", "go_library", "nogo")
+load("@io_bazel_rules_go//go:def.bzl", "nogo")
 
 nogo(
     name = "nogo",
@@ -35,12 +35,4 @@ nogo(
         "@org_golang_x_tools//go/analysis/passes/unsafeptr:go_tool_library",
         "@org_golang_x_tools//go/analysis/passes/unusedresult:go_tool_library",
     ],
-)
-
-go_library(
-    name = "tesla_exporter",
-    srcs = ["oauth2.go"],
-    importpath = "github.com/uhthomas/tesla_exporter",
-    visibility = ["//visibility:public"],
-    deps = ["@org_golang_x_oauth2//:oauth2"],
 )
