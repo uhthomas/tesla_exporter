@@ -1126,8 +1126,8 @@ def go_dependencies():
     go_repository(
         name = "com_github_uhthomas_tesla",
         importpath = "github.com/uhthomas/tesla",
-        sum = "h1:5w0XOqZ8+yx1ROqAyEXw2koJM8BjnbDC9QgZieCTTU4=",
-        version = "v0.1.1",
+        sum = "h1:Bse2RdVI0ClZauGVyXVGUtNWBK7ZC0am+UA8o1FgCTA=",
+        version = "v0.1.2",
     )
     go_repository(
         name = "com_github_urfave_cli",
@@ -1372,8 +1372,8 @@ def go_dependencies():
     go_repository(
         name = "org_golang_x_oauth2",
         importpath = "golang.org/x/oauth2",
-        sum = "h1:55H5j7lotzuFCEOKDsMch+fRNUQ9DgtyHOUP31FNqKc=",
-        version = "v0.0.0-20210126194326-f9ce19ea3013",
+        sum = "h1:alLDrZkL34Y2bnGHfvC1CYBRBXCXgx8AC2vY4MRtYX4=",
+        version = "v0.0.0-20210220000619-9bb904979d93",
     )
     go_repository(
         name = "org_golang_x_sync",

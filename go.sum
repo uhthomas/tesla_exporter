@@ -519,6 +519,8 @@ github.com/uhthomas/tesla v0.1.0 h1:PxkizWsSPBllN2eT34nV7SNQDEbroARRGUdlW1YPuVg=
 github.com/uhthomas/tesla v0.1.0/go.mod h1:VEiKAVT/KQUesEKv8ofrbxdY3kXgSVEOeBKfqfrYHr8=
 github.com/uhthomas/tesla v0.1.1 h1:5w0XOqZ8+yx1ROqAyEXw2koJM8BjnbDC9QgZieCTTU4=
 github.com/uhthomas/tesla v0.1.1/go.mod h1:VEiKAVT/KQUesEKv8ofrbxdY3kXgSVEOeBKfqfrYHr8=
+github.com/uhthomas/tesla v0.1.2 h1:Bse2RdVI0ClZauGVyXVGUtNWBK7ZC0am+UA8o1FgCTA=
+github.com/uhthomas/tesla v0.1.2/go.mod h1:VEiKAVT/KQUesEKv8ofrbxdY3kXgSVEOeBKfqfrYHr8=
 github.com/urfave/cli v1.20.0/go.mod h1:70zkFmudgCuE/ngEzBv17Jvp/497gISqfk5gWijbERA=
 github.com/urfave/cli v1.22.1 h1:+mkCCcOFKPnCmVYVcURKps1Xe+3zP90gSYGNfRkjoIY=
 github.com/urfave/cli v1.22.1/go.mod h1:Gos4lmkARVdJ6EkW0WaNv/tZAAMe9V7XWyB60NtXRu0=
@@ -640,6 +642,7 @@ golang.org/x/oauth2 v0.0.0-20191202225959-858c2ad4c8b6/go.mod h1:gOpvHmFTYa4Iltr
 golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
 golang.org/x/oauth2 v0.0.0-20210126194326-f9ce19ea3013 h1:55H5j7lotzuFCEOKDsMch+fRNUQ9DgtyHOUP31FNqKc=
 golang.org/x/oauth2 v0.0.0-20210126194326-f9ce19ea3013/go.mod h1:KelEdhl1UZF7XfJ4dDtk6s++YSgaE7mD/BuKKDLBl4A=
+golang.org/x/oauth2 v0.0.0-20210220000619-9bb904979d93 h1:alLDrZkL34Y2bnGHfvC1CYBRBXCXgx8AC2vY4MRtYX4=
 golang.org/x/oauth2 v0.0.0-20210220000619-9bb904979d93/go.mod h1:KelEdhl1UZF7XfJ4dDtk6s++YSgaE7mD/BuKKDLBl4A=
 golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 golang.org/x/sync v0.0.0-20181108010431-42b317875d0f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
