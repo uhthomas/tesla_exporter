@@ -16,7 +16,6 @@ import (
 	"github.com/uhthomas/tesla"
 	"github.com/uhthomas/tesla_exporter/internal"
 	"github.com/uhthomas/tesla_exporter/internal/collector"
-	"golang.org/x/oauth2"
 )
 
 func Main(ctx context.Context) error {
@@ -25,7 +24,7 @@ func Main(ctx context.Context) error {
 	oauth2TokenPath := flag.String("oauth2-token-path", "oauth2_token.json", "Tesla OAuth2 token file")
 	flag.Parse()
 
-	ctx = context.WithValue(ctx, oauth2.HTTPClient, &http.Client{
+	s, ctx, err := tesla.New(ctx, &http.Client{
 		Transport: &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
 			DialContext: (&net.Dialer{
@@ -39,9 +38,7 @@ func Main(ctx context.Context) error {
 			TLSHandshakeTimeout:   10 * time.Second,
 			ExpectContinueTimeout: 1 * time.Second,
 		},
-	})
-
-	s, err := tesla.New(ctx,
+	},
 		tesla.OAuth2(*oauth2ConfigPath, *oauth2TokenPath),
 	)
 	if err != nil {

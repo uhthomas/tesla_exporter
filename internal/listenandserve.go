@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"time"
 
@@ -25,6 +26,7 @@ func ListenAndServe(ctx context.Context, addr string, r *prometheus.Registry) er
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  120 * time.Second,
 		Handler:      m,
+		BaseContext:  func(net.Listener) context.Context { return ctx },
 	}
 
 	g, ctx := errgroup.WithContext(ctx)

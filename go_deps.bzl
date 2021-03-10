@@ -1126,8 +1126,8 @@ def go_dependencies():
     go_repository(
         name = "com_github_uhthomas_tesla",
         importpath = "github.com/uhthomas/tesla",
-        sum = "h1:Kg3eS9LJLdir6Qfe1LjtSxTIXY+ITOfb+v9VrhKCIZ0=",
-        version = "v0.1.6",
+        sum = "h1:RtzdX/Z+v0i1cc/SnchfGxW7Wncx31UDlz1+1DeicAQ=",
+        version = "v0.2.0",
     )
     go_repository(
         name = "com_github_urfave_cli",
