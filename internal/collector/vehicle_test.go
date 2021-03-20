@@ -29,7 +29,7 @@ func descs(c *VehicleCollector) []*prometheus.Desc {
 
 func TestNewVehicleCollector(t *testing.T) {
 	ctx, s := context.Background(), &tesla.Service{}
-	cc := NewVehicleCollector(ctx, s)
+	cc := NewVehicleCollector(ctx, s, 0)
 	if cc.ctx != ctx {
 		t.Fatalf("cc.ctx != ctx")
 	}
@@ -44,7 +44,7 @@ func TestNewVehicleCollector(t *testing.T) {
 }
 
 func TestVehicleCollector_Describe(t *testing.T) {
-	c := NewVehicleCollector(context.Background(), nil)
+	c := NewVehicleCollector(context.Background(), nil, 0)
 
 	ch := make(chan *prometheus.Desc)
 	go func() {

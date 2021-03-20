@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -11,8 +12,13 @@ import (
 )
 
 type VehicleCollector struct {
-	ctx context.Context
-	s   *tesla.Service
+	ctx    context.Context
+	s      *tesla.Service
+	expire time.Duration
+	last   time.Time
+	m      sync.RWMutex
+	cache  []prometheus.Metric
+
 	infoDesc,
 	nameDesc,
 	stateDesc,
@@ -29,10 +35,11 @@ type VehicleCollector struct {
 	chargeAmpsAvailableDesc *prometheus.Desc
 }
 
-func NewVehicleCollector(ctx context.Context, s *tesla.Service) *VehicleCollector {
+func NewVehicleCollector(ctx context.Context, s *tesla.Service, expire time.Duration) *VehicleCollector {
 	return &VehicleCollector{
 		ctx:                       ctx,
 		s:                         s,
+		expire:                    expire,
 		infoDesc:                  prometheus.NewDesc("tesla_vehicle_info", "Tesla vehicle info.", []string{"vin", "id", "vehicle_id"}, nil),
 		nameDesc:                  prometheus.NewDesc("tesla_vehicle_name", "Tesla vehicle name.", []string{"vin", "name"}, nil),
 		stateDesc:                 prometheus.NewDesc("tesla_vehicle_state", "Tesla vehicle state.", []string{"vin", "state"}, nil),
@@ -68,6 +75,31 @@ func (c *VehicleCollector) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (c *VehicleCollector) Collect(ch chan<- prometheus.Metric) {
+	c.m.RLock()
+	expired := time.Since(c.last) < c.expire
+	defer c.m.RUnlock()
+	if expired {
+		for _, m := range c.cache {
+			ch <- m
+		}
+		return
+	}
+
+	c.m.Lock()
+	defer c.m.RUnlock()
+
+	cc := make(chan prometheus.Metric)
+	c.collect(cc)
+
+	c.cache = c.cache[:0]
+	for m := range cc {
+		c.cache = append(c.cache, m)
+		ch <- m
+	}
+	c.last = time.Now()
+}
+
+func (c *VehicleCollector) collect(ch chan<- prometheus.Metric) {
 	ctx, cancel := context.WithTimeout(c.ctx, time.Minute)
 	defer cancel()
 

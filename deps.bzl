@@ -26,14 +26,11 @@ def dependencies():
         sha256 = "b6d46438523a3ec0f3cead544190ee13223a52f6a6765a29eae7b7cc24cc83a0",
         urls = ["https://github.com/bazelbuild/rules_python/releases/download/0.1.0/rules_python-0.1.0.tar.gz"],
     )
-
-    # pin to e15c9ebf203b7fa708e69ff5f1cdcf427d7edf6f, as sequential container_push
-    # is not available in v0.15.0
     http_archive(
         name = "io_bazel_rules_docker",
-        sha256 = "9c104580ea36dc93c91e5b7d5544dacfc823a5dca9ae0f4bc2f677b5599913d5",
-        strip_prefix = "rules_docker-8c3a8110a0c519929a7e79c39ac345a0f8c74d04",
-        urls = ["https://github.com/bazelbuild/rules_docker/archive/8c3a8110a0c519929a7e79c39ac345a0f8c74d04.tar.gz"],
+        sha256 = "95d39fd84ff4474babaf190450ee034d958202043e366b9fc38f438c9e6c3334",
+        strip_prefix = "rules_docker-0.16.0",
+        urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.16.0/rules_docker-v0.16.0.tar.gz"],
     )
     http_archive(
         name = "io_bazel_rules_go",

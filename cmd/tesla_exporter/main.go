@@ -22,6 +22,7 @@ func Main(ctx context.Context) error {
 	addr := flag.String("addr", ":80", "Listen address.")
 	oauth2ConfigPath := flag.String("oauth2-config-path", "oauth2_config.json", "Tesla OAuth2 config file")
 	oauth2TokenPath := flag.String("oauth2-token-path", "oauth2_token.json", "Tesla OAuth2 token file")
+	expire := flag.Duration("expire", 30*time.Second, "Expire cache metrics")
 	flag.Parse()
 
 	s, ctx, err := tesla.New(ctx, &http.Client{
@@ -46,7 +47,7 @@ func Main(ctx context.Context) error {
 	}
 
 	r := prometheus.NewRegistry()
-	if err := r.Register(collector.NewVehicleCollector(ctx, s)); err != nil {
+	if err := r.Register(collector.NewVehicleCollector(ctx, s, *expire)); err != nil {
 		return fmt.Errorf("register vehicle collector: %w", err)
 	}
 	return internal.ListenAndServe(ctx, *addr, r)
