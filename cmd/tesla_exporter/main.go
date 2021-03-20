@@ -46,8 +46,11 @@ func Main(ctx context.Context) error {
 		return fmt.Errorf("new tesla service: %w", err)
 	}
 
+	c := collector.NewVehicleCollector(ctx, s, *expire)
+	go c.Refresh()
+
 	r := prometheus.NewRegistry()
-	if err := r.Register(collector.NewVehicleCollector(ctx, s, *expire)); err != nil {
+	if err := r.Register(c); err != nil {
 		return fmt.Errorf("register vehicle collector: %w", err)
 	}
 	return internal.ListenAndServe(ctx, *addr, r)

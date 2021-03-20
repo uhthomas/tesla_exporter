@@ -58,7 +58,6 @@ func NewVehicleCollector(ctx context.Context, s *tesla.Service, expire time.Dura
 		chargeAmpsDesc:            prometheus.NewDesc("tesla_vehicle_charge_amps", "Tesla vehicle charge amps.", []string{"vin"}, nil),
 		chargeAmpsAvailableDesc:   prometheus.NewDesc("tesla_vehicle_charge_amps_available", "Tesla vehicle charge amps available.", []string{"vin"}, nil),
 	}
-	go c.refresh()
 	return c
 }
 
@@ -137,7 +136,7 @@ func (c *VehicleCollector) collect(ch chan<- prometheus.Metric) {
 	}
 }
 
-func (c *VehicleCollector) refresh() {
+func (c *VehicleCollector) Refresh() {
 	var last time.Time
 	for {
 		c.cond.L.Lock()
