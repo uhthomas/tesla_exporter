@@ -12,12 +12,12 @@ import (
 )
 
 type VehicleCollector struct {
-	ctx    context.Context
-	s      *tesla.Service
-	expire time.Duration
-	last   time.Time
-	m      sync.RWMutex
-	cache  []prometheus.Metric
+	ctx     context.Context
+	s       *tesla.Service
+	expire  time.Duration
+	m       *sync.RWMutex
+	cond    *sync.Cond
+	metrics []prometheus.Metric
 
 	infoDesc,
 	nameDesc,
@@ -36,10 +36,13 @@ type VehicleCollector struct {
 }
 
 func NewVehicleCollector(ctx context.Context, s *tesla.Service, expire time.Duration) *VehicleCollector {
-	return &VehicleCollector{
+	m := &sync.RWMutex{}
+	c := &VehicleCollector{
 		ctx:                       ctx,
 		s:                         s,
 		expire:                    expire,
+		m:                         m,
+		cond:                      sync.NewCond(m),
 		infoDesc:                  prometheus.NewDesc("tesla_vehicle_info", "Tesla vehicle info.", []string{"vin", "id", "vehicle_id"}, nil),
 		nameDesc:                  prometheus.NewDesc("tesla_vehicle_name", "Tesla vehicle name.", []string{"vin", "name"}, nil),
 		stateDesc:                 prometheus.NewDesc("tesla_vehicle_state", "Tesla vehicle state.", []string{"vin", "state"}, nil),
@@ -55,6 +58,8 @@ func NewVehicleCollector(ctx context.Context, s *tesla.Service, expire time.Dura
 		chargeAmpsDesc:            prometheus.NewDesc("tesla_vehicle_charge_amps", "Tesla vehicle charge amps.", []string{"vin"}, nil),
 		chargeAmpsAvailableDesc:   prometheus.NewDesc("tesla_vehicle_charge_amps_available", "Tesla vehicle charge amps available.", []string{"vin"}, nil),
 	}
+	go c.refresh()
+	return c
 }
 
 func (c *VehicleCollector) Describe(ch chan<- *prometheus.Desc) {
@@ -75,28 +80,14 @@ func (c *VehicleCollector) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (c *VehicleCollector) Collect(ch chan<- prometheus.Metric) {
+	c.cond.Signal()
+
 	c.m.RLock()
-	expired := time.Since(c.last) < c.expire
-	defer c.m.RUnlock()
-	if expired {
-		for _, m := range c.cache {
-			ch <- m
-		}
-		return
-	}
-
-	c.m.Lock()
 	defer c.m.RUnlock()
 
-	cc := make(chan prometheus.Metric)
-	c.collect(cc)
-
-	c.cache = c.cache[:0]
-	for m := range cc {
-		c.cache = append(c.cache, m)
+	for _, m := range c.metrics {
 		ch <- m
 	}
-	c.last = time.Now()
 }
 
 func (c *VehicleCollector) collect(ch chan<- prometheus.Metric) {
@@ -143,6 +134,25 @@ func (c *VehicleCollector) collect(ch chan<- prometheus.Metric) {
 		m.gauge(c.chargeVoltsDesc, float64(vv.ChargeState.ChargerVoltage))
 		m.gauge(c.chargeAmpsDesc, float64(vv.ChargeState.ChargerActualCurrent))
 		m.gauge(c.chargeAmpsAvailableDesc, float64(vv.ChargeState.ChargerPilotCurrent))
+	}
+}
+
+func (c *VehicleCollector) refresh() {
+	var last time.Time
+	for {
+		c.cond.L.Lock()
+		for time.Since(last) < c.expire {
+			c.cond.Wait()
+		}
+		cc := make(chan prometheus.Metric)
+		c.collect(cc)
+
+		c.metrics = c.metrics[:0]
+		for m := range cc {
+			c.metrics = append(c.metrics, m)
+		}
+		last = time.Now()
+		c.cond.L.Unlock()
 	}
 }
 
