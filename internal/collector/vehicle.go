@@ -140,11 +140,17 @@ func (c *VehicleCollector) Refresh() {
 	var last time.Time
 	for {
 		c.cond.L.Lock()
+
 		for time.Since(last) < c.expire {
 			c.cond.Wait()
 		}
+
 		cc := make(chan prometheus.Metric)
-		c.collect(cc)
+
+		go func() {
+			defer close(cc)
+			c.collect(cc)
+		}()
 
 		c.metrics = c.metrics[:0]
 		for m := range cc {
