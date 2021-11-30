@@ -4,31 +4,44 @@ Export Tesla vehicle metrics to Prometheus.
 
 ## Getting started
 
-To get started, [generate a token](#generated-a-token). Container images are
-pushed to the GitHub container registry, and tagged by release version. To
-use the latest version, please see the [releases](releases).
+To get started, [generate the OAuth 2.0 credentials](#generate-credentials).
+Container images are pushed to the GitHub container registry, and tagged by
+release version. See the
+[latest release](https://github.com/uhthomas/tesla_exporter/releases/latest).
 
-A token must be provided either as an environment variable, or as a flag.
+The OAuth 2.0 config and token must be provided, which can be configured with
+`--oauth2-config-path` and `--oauth-token-path`.
 
 ```sh
-docker run -e TOKEN=abc ghcr.io/uhthomas/tesla_exporter
+docker run \
+  -v "$(pwd)/oauth2_config.json":/etc/secret/oauth2_config.json \
+  -v "$(pwd)/oauth2_token.json":/etc/secret/oauth2_token.json \
+  ghcr.io/uhthomas/tesla_exporter \
+  --oauth2-config-path=/etc/secret/oauth2_config.json \
+  --oauth2-token-path=/etc/secret/oauth2_token.json
 ```
 
-## Generating a token
+## Generate credentials
 
-Use the [cmd/login](cmd/login) tool.
+Clone [uhthomas/tesla](https://github.com/uhthomas/tesla) and login with the
+[cmd/login](https://github.com/uhthomas/tesla/tree/master/cmd/login) tool.
 
 ```sh
+git clone git@github.com:uhthomas/tesla
+cd "$(basename \"$_\")"
 bazel run //cmd/login -- --username=hello@tesla.com --passcode=123456
 ```
 
-You'll then be prompted to enter your password, after which you'll be presented
-with your token.
+The tool will ask for a password and print the JSON encoded
+[oauth2 config](https://pkg.go.dev/golang.org/x/oauth2#Config) and
+[oauth2 token](https://pkg.go.dev/golang.org/x/oauth2#Token) upon successful
+authentication. Save the oauth2 config and token to new files named
+`oauth_config.json` and `oauth2_token.json` respectively.
 
 ## Metrics
 
-All metrics are labeled using the car's VIN. These are currently non-exhaustive,
-as many more are planned to be added.
+All metrics are labelled using the car's VIN. These are currently
+non-exhaustive, as many more are planned to be added.
 
 | Metric                                | API reference                       |
 | :------------------------------------ | :---------------------------------- |
