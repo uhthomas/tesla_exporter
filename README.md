@@ -23,20 +23,23 @@ docker run \
 
 ## Generate credentials
 
-Clone [uhthomas/tesla](https://github.com/uhthomas/tesla) and login with the
-[cmd/login](https://github.com/uhthomas/tesla/tree/master/cmd/login) tool.
+Download and run the [adriankumpf/tesla_auth](https://github.com/adriankumpf/tesla_auth#download) log-in tool. Run it with the "-o" parameter to get a long-lived token.
 
-```sh
-git clone git@github.com:uhthomas/tesla
-cd "$(basename \"$_\")"
-bazel run //cmd/login -- --username=hello@tesla.com --passcode=123456
+`./tesla_auth -o`
+
+It will emit, on success, an access token and a refresh token. You'll need these.
+
+Create two files. The first is `oauth2_config.json`, with these contents ([unless you're in the People's Republic of China](https://tesla-api.timdorr.com/api-basics/authentication)).
+
+```json
+{ "ClientID":"ownerapi", "ClientSecret":"", "Endpoint": { "AuthURL": "https://auth.tesla.com/oauth2/v3/authorize", "TokenURL":"https://auth.tesla.com/oauth2/v3/token" }, "RedirectURL":"https://auth.tesla.com/void/callback", "Scopes": [ "openid", "email", "offline_access"] }
 ```
 
-The tool will ask for a password and print the JSON encoded
-[oauth2 config](https://pkg.go.dev/golang.org/x/oauth2#Config) and
-[oauth2 token](https://pkg.go.dev/golang.org/x/oauth2#Token) upon successful
-authentication. Save the oauth2 config and token to new files named
-`oauth_config.json` and `oauth2_token.json` respectively.
+The second file you'll need to make is `oauth2_token.json`, and it should have the structure of this, with your access token (at AT) and refresh token (at RT) pasted in.
+
+```json
+{ "access_token":"AT", "token_type":"Bearer", "refresh_token":"RT" }
+```
 
 ## Metrics
 
