@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/prometheus/client_golang v1.13.0
 	github.com/uhthomas/tesla v0.3.1
-	golang.org/x/sync v0.0.0-20220929204114-8fcdb60fdcc0
+	golang.org/x/sync v0.1.0
 )
 
 require (
