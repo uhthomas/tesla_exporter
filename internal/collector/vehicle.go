@@ -18,6 +18,7 @@ type VehicleCollector struct {
 	m       *sync.RWMutex
 	cond    *sync.Cond
 	metrics []prometheus.Metric
+	last    time.Time
 
 	infoDesc,
 	nameDesc,
@@ -100,7 +101,7 @@ func (c *VehicleCollector) collect(ch chan<- prometheus.Metric) {
 	}
 
 	for _, v := range vs {
-		m := metricMaker{ch: ch, vin: v.VIN}
+		m := metricMaker{ch: ch, vin: v.VIN, timestamp: c.last}
 		m.gauge(c.infoDesc, 1,
 			strconv.FormatUint(v.ID, 10),
 			strconv.FormatUint(v.VehicleID, 10),
@@ -137,11 +138,10 @@ func (c *VehicleCollector) collect(ch chan<- prometheus.Metric) {
 }
 
 func (c *VehicleCollector) Refresh() {
-	var last time.Time
 	for {
 		c.cond.L.Lock()
 
-		for time.Since(last) < c.expire {
+		for time.Since(c.last) < c.expire {
 			c.cond.Wait()
 		}
 
@@ -156,21 +156,22 @@ func (c *VehicleCollector) Refresh() {
 		for m := range cc {
 			c.metrics = append(c.metrics, m)
 		}
-		last = time.Now()
+		c.last = time.Now()
 		c.cond.L.Unlock()
 	}
 }
 
 type metricMaker struct {
-	ch  chan<- prometheus.Metric
-	vin string
+	ch        chan<- prometheus.Metric
+	timestamp time.Time
+	vin       string
 }
 
 func (m *metricMaker) gauge(desc *prometheus.Desc, value float64, labelValues ...string) {
-	m.ch <- prometheus.MustNewConstMetric(
+	m.ch <- prometheus.NewMetricWithTimestamp(m.timestamp, prometheus.MustNewConstMetric(
 		desc,
 		prometheus.GaugeValue,
 		value,
 		append([]string{m.vin}, labelValues...)...,
-	)
+	))
 }
