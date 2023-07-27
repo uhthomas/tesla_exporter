@@ -138,9 +138,10 @@ func (c *VehicleCollector) collect(ch chan<- prometheus.Metric) {
 }
 
 func (c *VehicleCollector) Refresh() {
-	for {
-		c.cond.L.Lock()
+	c.cond.L.Lock()
+	defer c.cond.L.Unlock()
 
+	for {
 		for time.Since(c.last) < c.expire {
 			c.cond.Wait()
 		}
@@ -157,7 +158,6 @@ func (c *VehicleCollector) Refresh() {
 			c.metrics = append(c.metrics, m)
 		}
 		c.last = time.Now()
-		c.cond.L.Unlock()
 	}
 }
 
