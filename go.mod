@@ -1,6 +1,6 @@
 module github.com/uhthomas/tesla_exporter
 
-go 1.19
+go 1.23.0
 
 require (
 	github.com/prometheus/client_golang v1.17.0
@@ -19,7 +19,7 @@ require (
 	github.com/prometheus/common v0.44.0 // indirect
 	github.com/prometheus/procfs v0.11.1 // indirect
 	golang.org/x/net v0.10.0 // indirect
-	golang.org/x/oauth2 v0.8.0 // indirect
+	golang.org/x/oauth2 v0.27.0 // indirect
 	golang.org/x/sys v0.11.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
